@@ -1,0 +1,36 @@
+{
+  "name": "@web4w3/install",
+  "version": "1.0.0",
+  "description": "Pre-compiled MCP servers for the Web4W3 ecosystem. Use any MCP with a single npx command.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "web4w3": "./index.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:android-bridge": "node scripts/build.js android-bridge",
+    "build:brotherhood": "node scripts/build.js brotherhood",
+    "build:chrome-bridge": "node scripts/build.js chrome-bridge",
+    "build:gmail": "node scripts/build.js gmail",
+    "build:msteams": "node scripts/build.js msteams",
+    "build:nut-js": "node scripts/build.js nut-js",
+    "build:outlook": "node scripts/build.js outlook"
+  },
+  "files": [
+    "index.js",
+    "dist/**/*.mjs"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "claude-code",
+    "web4w3"
+  ]
+}
