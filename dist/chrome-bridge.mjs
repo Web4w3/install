@@ -49880,8 +49880,8 @@ var require_path_key = __commonJS({
     module2.exports = (opts) => {
       opts = opts || {};
       const env = opts.env || process.env;
-      const platform = opts.platform || process.platform;
-      if (platform !== "win32") {
+      const platform2 = opts.platform || process.platform;
+      if (platform2 !== "win32") {
         return "PATH";
       }
       return Object.keys(env).find((x) => x.toUpperCase() === "PATH") || "Path";
@@ -51272,8 +51272,8 @@ var require_path_key2 = __commonJS({
     module2.exports = (opts) => {
       opts = opts || {};
       const env = opts.env || process.env;
-      const platform = opts.platform || process.platform;
-      if (platform !== "win32") {
+      const platform2 = opts.platform || process.platform;
+      if (platform2 !== "win32") {
         return "PATH";
       }
       return Object.keys(env).find((x) => x.toUpperCase() === "PATH") || "Path";
@@ -79983,6 +79983,8 @@ var StdioServerTransport = class {
 
 // index.mjs
 import { writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { platform } from "node:os";
 
 // ../node_modules/ws/wrapper.mjs
 var import_stream = __toESM(require_stream(), 1);
@@ -79997,6 +79999,64 @@ var import_websocket_server = __toESM(require_websocket_server(), 1);
 // index.mjs
 var import_nut_js = __toESM(require_dist38(), 1);
 var WS_PORT = parseInt(process.env.CHROME_BRIDGE_PORT || "9229", 10);
+var _displayCache = null;
+var _displayCacheTime = 0;
+var DISPLAY_CACHE_TTL = 2e3;
+function getDisplaysSync() {
+  const now = Date.now();
+  if (_displayCache && now - _displayCacheTime < DISPLAY_CACHE_TTL) return _displayCache;
+  const p = platform();
+  let displays;
+  if (p === "darwin") {
+    const swiftScript = [
+      "import CoreGraphics",
+      "import Foundation",
+      "var ids = [CGDirectDisplayID](repeating: 0, count: 16)",
+      "var count: UInt32 = 0",
+      "CGGetActiveDisplayList(16, &ids, &count)",
+      "for i in 0..<Int(count) {",
+      "  let id = ids[i]",
+      "  let b = CGDisplayBounds(id)",
+      '  print("\\(id),\\(Int(b.origin.x)),\\(Int(b.origin.y)),\\(Int(b.size.width)),\\(Int(b.size.height)),\\(CGDisplayIsMain(id) != 0 ? 1 : 0)")',
+      "}"
+    ].join("\n");
+    const out = execSync("swift -", { input: swiftScript, encoding: "utf8", timeout: 1e4 });
+    displays = out.trim().split("\n").filter(Boolean).map((line, index) => {
+      const [id, x, y, width, height, primary] = line.split(",").map(Number);
+      return { index, id, x, y, width, height, primary: primary === 1 };
+    });
+  } else if (p === "linux") {
+    const out = execSync("xrandr --query", { encoding: "utf8", timeout: 5e3 });
+    displays = [];
+    let index = 0;
+    for (const line of out.split("\n")) {
+      const m = line.match(/^(\S+) connected(?: primary)? (\d+)x(\d+)\+(\d+)\+(\d+)/);
+      if (m) {
+        displays.push({
+          index: index++,
+          name: m[1],
+          x: parseInt(m[4]),
+          y: parseInt(m[5]),
+          width: parseInt(m[2]),
+          height: parseInt(m[3]),
+          primary: line.includes(" primary ")
+        });
+      }
+    }
+  } else if (p === "win32") {
+    const ps = `Add-Type -AssemblyName System.Windows.Forms; $i=0; [System.Windows.Forms.Screen]::AllScreens | ForEach-Object { Write-Output "$i,$($_.Bounds.X),$($_.Bounds.Y),$($_.Bounds.Width),$($_.Bounds.Height),$($_.Primary)"; $i++ }`;
+    const out = execSync(`powershell -NoProfile -Command "${ps}"`, { encoding: "utf8", timeout: 5e3 });
+    displays = out.trim().split("\n").filter(Boolean).map((line) => {
+      const [index, x, y, width, height, primary] = line.split(",");
+      return { index: parseInt(index), x: parseInt(x), y: parseInt(y), width: parseInt(width), height: parseInt(height), primary: primary.trim() === "True" };
+    });
+  } else {
+    displays = [];
+  }
+  _displayCache = displays;
+  _displayCacheTime = now;
+  return displays;
+}
 var chromeSocket = null;
 var pendingRequests = /* @__PURE__ */ new Map();
 var requestId = 0;
@@ -80363,10 +80423,27 @@ server.tool(
   }
 );
 server.tool(
-  "screen_size",
-  "Get the screen width and height in pixels",
+  "get_displays",
+  "List all connected displays with their index, bounds (x, y, width, height in virtual screen coordinates), and which is primary. Pass the index to screen_capture or screen_size to target a specific display.",
   {},
   async () => {
+    const displays = getDisplaysSync();
+    return { content: [{ type: "text", text: JSON.stringify(displays, null, 2) }] };
+  }
+);
+server.tool(
+  "screen_size",
+  "Get the screen width and height in pixels",
+  {
+    display: external_exports.number().optional().describe("Display index from get_displays. If omitted, returns the primary display size.")
+  },
+  async ({ display }) => {
+    if (display !== void 0) {
+      const displays = getDisplaysSync();
+      const d = displays[display];
+      if (!d) throw new Error(`Display ${display} not found. Run get_displays to list available displays.`);
+      return { content: [{ type: "text", text: JSON.stringify({ width: d.width, height: d.height, x: d.x, y: d.y, display: d.index }) }] };
+    }
     const [width, height] = await Promise.all([import_nut_js.screen.width(), import_nut_js.screen.height()]);
     return { content: [{ type: "text", text: JSON.stringify({ width, height }) }] };
   }
@@ -80376,10 +80453,18 @@ server.tool(
   "Capture the entire screen and save as a PNG file",
   {
     fileName: external_exports.string().describe("File name without extension"),
-    filePath: external_exports.string().optional().describe("Directory path to save to (default: current working directory)")
+    filePath: external_exports.string().optional().describe("Directory path to save to (default: current working directory)"),
+    display: external_exports.number().optional().describe("Display index from get_displays. If omitted, captures the primary display.")
   },
-  async ({ fileName, filePath }) => {
-    await import_nut_js.screen.capture(fileName, import_nut_js.FileType.PNG, filePath);
+  async ({ fileName, filePath, display }) => {
+    if (display !== void 0) {
+      const displays = getDisplaysSync();
+      const d = displays[display];
+      if (!d) throw new Error(`Display ${display} not found. Run get_displays to list available displays.`);
+      await import_nut_js.screen.captureRegion(fileName, new import_nut_js.Region(d.x, d.y, d.width, d.height), import_nut_js.FileType.PNG, filePath);
+    } else {
+      await import_nut_js.screen.capture(fileName, import_nut_js.FileType.PNG, filePath);
+    }
     const saved = `${filePath ?? "."}/${fileName}${import_nut_js.FileType.PNG}`;
     return { content: [{ type: "text", text: JSON.stringify({ success: true, saved }) }] };
   }
