@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (build only, do not publish)'
+        description: 'Dry run (skip publish)'
         type: boolean
         default: false
 
@@ -19,96 +19,21 @@ jobs:
       id-token: write  # required for npm provenance
 
     steps:
-      - name: Checkout install
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: install
-
-      # Clone all MCP source repos as siblings so build.js can find them
-      # GH_PAT must have read access to all private source repos
-      - name: Checkout android-desktop-bridge
-        uses: actions/checkout@v4
-        with:
-          repository: Web4w3/android-desktop-bridge
-          path: android-desktop-bridge
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout brotherhood
-        uses: actions/checkout@v4
-        with:
-          repository: Web4w3/brotherhood
-          path: brotherhood
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout chrome-bridge
-        uses: actions/checkout@v4
-        with:
-          repository: andrey-karasev/chrome-bridge-mcp
-          path: chrome-bridge
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout gmail-mcp-server
-        uses: actions/checkout@v4
-        with:
-          repository: andrey-karasev/gmail-mcp-server
-          path: gmail-mcp-server
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout MSTeams
-        uses: actions/checkout@v4
-        with:
-          repository: andrey-karasev/MSTeams
-          path: MSTeams
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout nut-js-mcp-server
-        uses: actions/checkout@v4
-        with:
-          repository: andrey-karasev/nut-js-mcp-server
-          path: nut-js-mcp-server
-          token: ${{ secrets.GH_PAT || github.token }}
-
-      - name: Checkout outlook-mcp-server
-        uses: actions/checkout@v4
-        with:
-          repository: andrey-karasev/outlook-mcp-server
-          path: outlook-mcp-server
-          token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-          cache-dependency-path: install/package-lock.json
-
-      # Install deps for the bundler
-      - name: Install install/ dependencies
-        run: npm ci
-        working-directory: install
-
-      # Source repos that require npm install before bundling
-      - name: Install android-desktop-bridge/packages/mcp-server dependencies
-        run: npm ci
-        working-directory: android-desktop-bridge/packages/mcp-server
-
-      - name: Install outlook-mcp-server dependencies
-        run: npm ci
-        working-directory: outlook-mcp-server
-
-      - name: Build all MCPs
-        run: node scripts/build.js
-        working-directory: install
 
       - name: Verify dist files
         run: ls -lh dist/
-        working-directory: install
 
       - name: Publish to npm
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: npm publish --access public --provenance
-        working-directory: install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -116,5 +41,4 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           echo "Dry run — skipping publish."
-          echo "Would publish: $(node -e "console.log(require('./package.json').name + '@' + require('./package.json').version)")"
-        working-directory: install
+          node -e "const p=require('./package.json'); console.log('Would publish: ' + p.name + '@' + p.version)"
