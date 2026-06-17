@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Pre-compiled MCP servers for the Web4W3 ecosystem. Use any MCP with a single npx command.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Web4w3/install"
+  },
   "engines": {
     "node": ">=18"
   },
