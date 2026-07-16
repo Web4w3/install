@@ -54,5 +54,6 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           git add dist/ package.json package-lock.json
           git commit -m "chore: rebuild ${{ github.event.client_payload.mcp }} → v$VERSION"
-          git tag "v$VERSION"
-          git push origin main --follow-tags
+          git tag -a "v$VERSION" -m "v$VERSION"
+          git push origin main
+          git push origin "v$VERSION"
