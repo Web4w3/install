@@ -1,0 +1,54 @@
+name: Rebuild and publish
+
+on:
+  repository_dispatch:
+    types: [rebuild]
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout install
+        uses: actions/checkout@v4
+
+      - name: Clone MCP source repo
+        run: |
+          MCP="${{ github.event.client_payload.mcp }}"
+          case "$MCP" in
+            chrome-bridge)   REPO="andrey-karasev/chrome-bridge-mcp" ;;
+            brotherhood)     REPO="Web4w3/brotherhood" ;;
+            android-bridge)  REPO="Web4w3/android-desktop-bridge" ;;
+            gmail)           REPO="Web4w3/gmail-mcp-server" ;;
+            msteams)         REPO="Web4w3/MSTeams" ;;
+            nut-js)          REPO="Web4w3/nut-js-mcp-server" ;;
+            outlook)         REPO="Web4w3/outlook-mcp-server" ;;
+            *)               echo "Unknown MCP: $MCP"; exit 1 ;;
+          esac
+          git clone --depth 1 "https://github.com/$REPO.git" "../$MCP"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bundle
+        run: npm run build:${{ github.event.client_payload.mcp }}
+
+      - name: Bump patch version, commit, tag and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          npm version patch --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          git add dist/ package.json package-lock.json
+          git commit -m "chore: rebuild ${{ github.event.client_payload.mcp }} → v$VERSION"
+          git tag "v$VERSION"
+          git push origin main --follow-tags
