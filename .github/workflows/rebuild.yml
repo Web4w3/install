@@ -29,6 +29,10 @@ jobs:
           esac
           git clone --depth 1 "https://github.com/$REPO.git" "../$MCP"
 
+      - name: Install source dependencies
+        run: npm install --ignore-scripts
+        working-directory: ${{ github.workspace }}/../${{ github.event.client_payload.mcp }}
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -36,7 +40,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install install-repo dependencies
         run: npm ci
 
       - name: Build bundle
