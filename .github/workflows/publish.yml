@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # required for npm provenance
+      id-token: write
 
     steps:
       - name: Checkout
@@ -30,6 +30,11 @@ jobs:
 
       - name: Verify dist files
         run: ls -lh dist/
+
+      - name: Debug npm auth
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
         if: ${{ github.event.inputs.dry_run != 'true' }}
