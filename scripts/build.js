@@ -7,6 +7,11 @@ const fs = require('fs');
 const ROOT = path.resolve(__dirname, '../..');
 const OUT = path.resolve(__dirname, '../dist');
 
+function startsWithShebang(filePath) {
+  const firstLine = fs.readFileSync(filePath, 'utf8').split('\n', 1)[0] || '';
+  return firstLine.startsWith('#!');
+}
+
 const MCPS = {
   'android-bridge': {
     entry: path.join(ROOT, 'android-desktop-bridge/packages/mcp-server/src/index.ts'),
@@ -18,7 +23,8 @@ const MCPS = {
   },
   'chrome-bridge': {
     entry: path.join(ROOT, 'chrome-bridge/mcp-server/index.mjs'),
-    external: [],
+    // Keep ws external so Node resolves it natively and avoids ESM dynamic-require traps.
+    external: ['ws'],
   },
   'gmail': {
     entry: path.join(ROOT, 'gmail-mcp-server/src/index.ts'),
@@ -48,6 +54,8 @@ async function buildOne(name, config) {
   }
 
   try {
+    const addShebangBanner = !startsWithShebang(config.entry);
+
     await esbuild.build({
       entryPoints: [config.entry],
       bundle: true,
@@ -58,7 +66,7 @@ async function buildOne(name, config) {
       external: config.external,
       // Keep source directory as the module root so relative imports resolve
       absWorkingDir: path.dirname(config.entry),
-      banner: { js: '#!/usr/bin/env node' },
+      banner: addShebangBanner ? { js: '#!/usr/bin/env node' } : undefined,
       logLevel: 'error',
     });
     const size = (fs.statSync(outfile).size / 1024).toFixed(1);

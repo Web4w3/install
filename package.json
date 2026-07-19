@@ -36,5 +36,8 @@
     "claude",
     "claude-code",
     "web4w3"
-  ]
+  ],
+  "dependencies": {
+    "ws": "^8.21.1"
+  }
 }
