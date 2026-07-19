@@ -1,17 +1,17 @@
 {
   "name": "@web4w3/install",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Pre-compiled MCP servers for the Web4W3 ecosystem. Use any MCP with a single npx command.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Web4w3/install"
+    "url": "git+https://github.com/Web4w3/install.git"
   },
   "engines": {
     "node": ">=18"
   },
   "bin": {
-    "web4w3": "./index.js"
+    "web4w3": "index.js"
   },
   "scripts": {
     "build": "node scripts/build.js",
