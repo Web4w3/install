@@ -18,16 +18,17 @@ jobs:
         run: |
           MCP="${{ github.event.client_payload.mcp }}"
           case "$MCP" in
-            chrome-bridge)   REPO="andrey-karasev/chrome-bridge-mcp" ;;
+            chrome-bridge)   REPO="Web4w3/chrome-bridge-mcp" ;;
             brotherhood)     REPO="Web4w3/brotherhood" ;;
             android-bridge)  REPO="Web4w3/android-desktop-bridge" ;;
             gmail)           REPO="Web4w3/gmail-mcp-server" ;;
             msteams)         REPO="Web4w3/MSTeams" ;;
             nut-js)          REPO="Web4w3/nut-js-mcp-server" ;;
             outlook)         REPO="Web4w3/outlook-mcp-server" ;;
+            psql)            REPO="Web4w3/psql-mcp-server" ;;
             *)               echo "Unknown MCP: $MCP"; exit 1 ;;
           esac
-          git clone --depth 1 "https://github.com/$REPO.git" "../$MCP"
+          git clone --depth 1 "https://x-access-token:${{ secrets.GH_PAT }}@github.com/$REPO.git" "../$MCP"
 
       - name: Install source dependencies
         run: npm install --ignore-scripts

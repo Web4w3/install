@@ -41,6 +41,11 @@ const MCPS = {
     dist: 'outlook.mjs',
     env: ['AZURE_CLIENT_ID', 'AZURE_TENANT_ID', 'AZURE_CLIENT_SECRET'],
   },
+  'psql': {
+    desc: 'Run psql commands against a Postgres database',
+    dist: 'psql.mjs',
+    env: ['DATABASE_URL'],
+  },
 };
 
 const mcp = process.argv[2];

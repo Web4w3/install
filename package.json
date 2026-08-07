@@ -21,7 +21,8 @@
     "build:gmail": "node scripts/build.js gmail",
     "build:msteams": "node scripts/build.js msteams",
     "build:nut-js": "node scripts/build.js nut-js",
-    "build:outlook": "node scripts/build.js outlook"
+    "build:outlook": "node scripts/build.js outlook",
+    "build:psql": "node scripts/build.js psql"
   },
   "files": [
     "index.js",

@@ -37,6 +37,10 @@ const MCPS = {
     entry: path.join(ROOT, 'outlook-mcp-server/src/index.ts'),
     external: [],
   },
+  'psql': {
+    entry: path.join(ROOT, 'psql-mcp-server/src/index.ts'),
+    external: [],
+  },
 };
 
 async function buildOne(name, config) {
