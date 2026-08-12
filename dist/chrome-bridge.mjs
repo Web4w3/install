@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-#!/usr/bin/env node
+import { createRequire as __lpCreateRequire } from 'node:module';
+const require = __lpCreateRequire(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -3772,6 +3773,7 @@ var require_fast_uri = __commonJS({
       return uriTokens.join("");
     }
     var URI_PARSE = /^(?:([^#/:?]+):)?(?:\/\/((?:([^#/?@]*)@)?(\[[^#/?\]]+\]|[^#/:?]*)(?::(\d*))?))?([^#?]*)(?:\?([^#]*))?(?:#((?:.|[\n\r])*))?/u;
+    var AUTHORITY_PREFIX = /^(?:[^#/:?]+:)?\/\/([^/?#]*)/;
     function getParseError(parsed, matches) {
       if (matches[2] !== void 0 && parsed.path && parsed.path[0] !== "/") {
         return 'URI path must start with "/" when authority is present.';
@@ -3800,6 +3802,11 @@ var require_fast_uri = __commonJS({
         } else {
           uri = "//" + uri;
         }
+      }
+      const authorityMatch = uri.match(AUTHORITY_PREFIX);
+      if (authorityMatch !== null && authorityMatch[1].indexOf("\\") !== -1) {
+        parsed.error = "URI authority must not contain a literal backslash.";
+        malformedAuthorityOrPort = true;
       }
       const matches = uri.match(URI_PARSE);
       if (matches) {
@@ -3844,7 +3851,7 @@ var require_fast_uri = __commonJS({
         if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport)) {
           if (parsed.host && (options.domainHost || schemeHandler && schemeHandler.domainHost) && isIP === false && nonSimpleDomain(parsed.host)) {
             try {
-              parsed.host = URL.domainToASCII(parsed.host.toLowerCase());
+              parsed.host = new URL("http://" + parsed.host).hostname;
             } catch (e) {
               parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
             }
@@ -7659,6 +7666,10 @@ var require_receiver = __commonJS({
        *     extensions
        * @param {Boolean} [options.isServer=false] Specifies whether to operate in
        *     client or server mode
+       * @param {Number} [options.maxBufferedChunks=0] The maximum number of
+       *     buffered data chunks
+       * @param {Number} [options.maxFragments=0] The maximum number of message
+       *     fragments
        * @param {Number} [options.maxPayload=0] The maximum allowed message length
        * @param {Boolean} [options.skipUTF8Validation=false] Specifies whether or
        *     not to skip UTF-8 validation for text and close messages
@@ -7669,6 +7680,8 @@ var require_receiver = __commonJS({
         this._binaryType = options.binaryType || BINARY_TYPES[0];
         this._extensions = options.extensions || {};
         this._isServer = !!options.isServer;
+        this._maxBufferedChunks = options.maxBufferedChunks | 0;
+        this._maxFragments = options.maxFragments | 0;
         this._maxPayload = options.maxPayload | 0;
         this._skipUTF8Validation = !!options.skipUTF8Validation;
         this[kWebSocket] = void 0;
@@ -7683,6 +7696,7 @@ var require_receiver = __commonJS({
         this._opcode = 0;
         this._totalPayloadLength = 0;
         this._messageLength = 0;
+        this._numFragments = 0;
         this._fragments = [];
         this._errored = false;
         this._loop = false;
@@ -7698,6 +7712,18 @@ var require_receiver = __commonJS({
        */
       _write(chunk, encoding, cb) {
         if (this._opcode === 8 && this._state == GET_INFO) return cb();
+        if (this._maxBufferedChunks > 0 && this._buffers.length >= this._maxBufferedChunks) {
+          cb(
+            this.createError(
+              RangeError,
+              "Too many buffered chunks",
+              false,
+              1008,
+              "WS_ERR_TOO_MANY_BUFFERED_PARTS"
+            )
+          );
+          return;
+        }
         this._bufferedBytes += chunk.length;
         this._buffers.push(chunk);
         this.startLoop(cb);
@@ -8021,6 +8047,17 @@ var require_receiver = __commonJS({
           this.controlMessage(data, cb);
           return;
         }
+        if (this._maxFragments > 0 && ++this._numFragments > this._maxFragments) {
+          const error51 = this.createError(
+            RangeError,
+            "Too many message fragments",
+            false,
+            1008,
+            "WS_ERR_TOO_MANY_BUFFERED_PARTS"
+          );
+          cb(error51);
+          return;
+        }
         if (this._compressed) {
           this._state = INFLATING;
           this.decompress(data, cb);
@@ -8078,6 +8115,7 @@ var require_receiver = __commonJS({
         this._totalPayloadLength = 0;
         this._messageLength = 0;
         this._fragmented = 0;
+        this._numFragments = 0;
         this._fragments = [];
         if (this._opcode === 2) {
           let data;
@@ -9262,6 +9300,10 @@ var require_websocket = __commonJS({
        *     multiple times in the same tick
        * @param {Function} [options.generateMask] The function used to generate the
        *     masking key
+       * @param {Number} [options.maxBufferedChunks=0] The maximum number of
+       *     buffered data chunks
+       * @param {Number} [options.maxFragments=0] The maximum number of message
+       *     fragments
        * @param {Number} [options.maxPayload=0] The maximum allowed message size
        * @param {Boolean} [options.skipUTF8Validation=false] Specifies whether or
        *     not to skip UTF-8 validation for text and close messages
@@ -9273,6 +9315,8 @@ var require_websocket = __commonJS({
           binaryType: this.binaryType,
           extensions: this._extensions,
           isServer: this._isServer,
+          maxBufferedChunks: options.maxBufferedChunks,
+          maxFragments: options.maxFragments,
           maxPayload: options.maxPayload,
           skipUTF8Validation: options.skipUTF8Validation
         });
@@ -9572,6 +9616,8 @@ var require_websocket = __commonJS({
         autoPong: true,
         closeTimeout: CLOSE_TIMEOUT,
         protocolVersion: protocolVersions[1],
+        maxBufferedChunks: 256 * 1024,
+        maxFragments: 16 * 1024,
         maxPayload: 100 * 1024 * 1024,
         skipUTF8Validation: false,
         perMessageDeflate: true,
@@ -9814,6 +9860,8 @@ var require_websocket = __commonJS({
         websocket.setSocket(socket, head, {
           allowSynchronousEvents: opts.allowSynchronousEvents,
           generateMask: opts.generateMask,
+          maxBufferedChunks: opts.maxBufferedChunks,
+          maxFragments: opts.maxFragments,
           maxPayload: opts.maxPayload,
           skipUTF8Validation: opts.skipUTF8Validation
         });
@@ -10156,6 +10204,10 @@ var require_websocket_server = __commonJS({
        *     called
        * @param {Function} [options.handleProtocols] A hook to handle protocols
        * @param {String} [options.host] The hostname where to bind the server
+       * @param {Number} [options.maxBufferedChunks=262144] The maximum number of
+       *     buffered data chunks
+       * @param {Number} [options.maxFragments=16384] The maximum number of message
+       *     fragments
        * @param {Number} [options.maxPayload=104857600] The maximum allowed message
        *     size
        * @param {Boolean} [options.noServer=false] Enable no server mode
@@ -10177,6 +10229,8 @@ var require_websocket_server = __commonJS({
         options = {
           allowSynchronousEvents: true,
           autoPong: true,
+          maxBufferedChunks: 256 * 1024,
+          maxFragments: 16 * 1024,
           maxPayload: 100 * 1024 * 1024,
           skipUTF8Validation: false,
           perMessageDeflate: false,
@@ -10456,6 +10510,8 @@ var require_websocket_server = __commonJS({
         socket.removeListener("error", socketOnError);
         ws.setSocket(socket, head, {
           allowSynchronousEvents: this.options.allowSynchronousEvents,
+          maxBufferedChunks: this.options.maxBufferedChunks,
+          maxFragments: this.options.maxFragments,
           maxPayload: this.options.maxPayload,
           skipUTF8Validation: this.options.skipUTF8Validation
         });
@@ -34575,7 +34631,7 @@ var StdioServerTransport = class {
   }
 };
 
-// index.mjs
+// index.ts
 import { writeFileSync } from "node:fs";
 
 // ../node_modules/ws/wrapper.mjs
@@ -34588,21 +34644,23 @@ var import_subprotocol = __toESM(require_subprotocol(), 1);
 var import_websocket = __toESM(require_websocket(), 1);
 var import_websocket_server = __toESM(require_websocket_server(), 1);
 
-// index.mjs
+// index.ts
 var WS_PORT = parseInt(process.env.CHROME_BRIDGE_PORT || "9229", 10);
 var chromeSocket = null;
 var pendingRequests = /* @__PURE__ */ new Map();
 var requestId = 0;
 var wss = new import_websocket_server.default({ port: WS_PORT });
 wss.on("connection", (ws) => {
-  process.stderr.write(`[chrome-bridge] Extension connected
-`);
+  process.stderr.write("[chrome-bridge] Extension connected\n");
   chromeSocket = ws;
   ws.on("message", (data) => {
     try {
       const msg = JSON.parse(data.toString());
       if (msg.type === "ping") {
         ws.send(JSON.stringify({ type: "pong" }));
+        return;
+      }
+      if (typeof msg.id !== "number") {
         return;
       }
       const pending = pendingRequests.get(msg.id);
@@ -34615,15 +34673,15 @@ wss.on("connection", (ws) => {
         }
       }
     } catch (err) {
-      process.stderr.write(`[chrome-bridge] Parse error: ${err.message}
+      const message = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`[chrome-bridge] Parse error: ${message}
 `);
     }
   });
   ws.on("close", () => {
-    process.stderr.write(`[chrome-bridge] Extension disconnected
-`);
+    process.stderr.write("[chrome-bridge] Extension disconnected\n");
     chromeSocket = null;
-    for (const [id, pending] of pendingRequests) {
+    for (const [, pending] of pendingRequests) {
       pending.reject(new Error("Extension disconnected"));
     }
     pendingRequests.clear();
@@ -34632,7 +34690,8 @@ wss.on("connection", (ws) => {
 function sendToExtension(method, params = {}, timeoutMs = 3e4) {
   return new Promise((resolve, reject) => {
     if (!chromeSocket || chromeSocket.readyState !== 1) {
-      return reject(new Error("Chrome extension not connected. Make sure the extension is installed and active."));
+      reject(new Error("Chrome extension not connected. Make sure the extension is installed and active."));
+      return;
     }
     const id = ++requestId;
     const timer = setTimeout(() => {
@@ -34673,7 +34732,7 @@ server.tool(
   },
   async ({ maxLength }) => {
     const result = await sendToExtension("readPage", { maxLength: maxLength || 5e4 });
-    return { content: [{ type: "text", text: result }] };
+    return { content: [{ type: "text", text: typeof result === "string" ? result : JSON.stringify(result) }] };
   }
 );
 server.tool(
@@ -34721,9 +34780,17 @@ server.tool(
   },
   async ({ savePath }) => {
     const result = await sendToExtension("screenshot", {});
+    if (!result.data) {
+      throw new Error("Screenshot response missing image data");
+    }
     if (savePath) {
       writeFileSync(savePath, Buffer.from(result.data, "base64"));
-      return { content: [{ type: "text", text: `Screenshot saved to ${savePath}` }, { type: "image", data: result.data, mimeType: "image/png" }] };
+      return {
+        content: [
+          { type: "text", text: `Screenshot saved to ${savePath}` },
+          { type: "image", data: result.data, mimeType: "image/png" }
+        ]
+      };
     }
     return { content: [{ type: "image", data: result.data, mimeType: "image/png" }] };
   }

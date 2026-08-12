@@ -11,50 +11,66 @@ jobs:
       contents: write
 
     steps:
+      # Checked out with GH_PAT rather than the default GITHUB_TOKEN: pushes made
+      # with GITHUB_TOKEN do not trigger other workflows, so the tag pushed at
+      # the end of this job would never start publish.yml. That is why v1.0.2
+      # had to be released by hand even though this job already existed.
       - name: Checkout install
-        uses: actions/checkout@v4
-
-      - name: Clone MCP source repo
-        run: |
-          MCP="${{ github.event.client_payload.mcp }}"
-          case "$MCP" in
-            chrome-bridge)   REPO="Web4w3/chrome-bridge-mcp" ;;
-            brotherhood)     REPO="Web4w3/brotherhood" ;;
-            android-bridge)  REPO="Web4w3/android-desktop-bridge" ;;
-            gmail)           REPO="Web4w3/gmail-mcp-server" ;;
-            msteams)         REPO="Web4w3/MSTeams" ;;
-            nut-js)          REPO="Web4w3/nut-js-mcp-server" ;;
-            outlook)         REPO="Web4w3/outlook-mcp-server" ;;
-            psql)            REPO="Web4w3/psql-mcp-server" ;;
-            *)               echo "Unknown MCP: $MCP"; exit 1 ;;
-          esac
-          git clone --depth 1 "https://x-access-token:${{ secrets.GH_PAT }}@github.com/$REPO.git" "../$MCP"
-
-      - name: Install source dependencies
-        run: npm install --ignore-scripts
-        working-directory: ${{ github.workspace }}/../${{ github.event.client_payload.mcp }}
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
+      # Must precede the resolve step below: build.js requires esbuild.
       - name: Install install-repo dependencies
         run: npm ci
 
+      # The repo slug and checkout directory come from build.js, which is the
+      # only place they are defined. This step used to carry its own case
+      # statement; it disagreed with build.js for six of eight MCPs.
+      - name: Resolve source repo
+        id: src
+        run: node scripts/build.js --meta "${{ github.event.client_payload.mcp }}" >> "$GITHUB_OUTPUT"
+
+      - name: Clone MCP source repo
+        run: |
+          git clone --depth 1 \
+            "https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ steps.src.outputs.repo }}.git" \
+            "../${{ steps.src.outputs.dir }}"
+
+      - name: Install source dependencies
+        run: npm install --ignore-scripts
+        working-directory: ${{ github.workspace }}/../${{ steps.src.outputs.dir }}
+
       - name: Build bundle
-        run: npm run build:${{ github.event.client_payload.mcp }}
+        run: npm run build:${{ steps.src.outputs.mcp }}
+
+      # A green esbuild run says nothing about whether the bundle can be
+      # imported. This gate exists because three separate defects reached npm
+      # behind a green build.
+      - name: Smoke-test bundle
+        run: npm run smoke -- ${{ steps.src.outputs.mcp }}
 
       - name: Bump patch version, commit, tag and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- dist/; then
+            echo "::notice::Bundle for ${{ steps.src.outputs.mcp }} is unchanged — nothing to release."
+            exit 0
+          fi
+
           npm version patch --no-git-tag-version
           VERSION=$(node -p "require('./package.json').version")
           git add dist/ package.json package-lock.json
-          git commit -m "chore: rebuild ${{ github.event.client_payload.mcp }} → v$VERSION"
+          git commit -m "chore: rebuild ${{ steps.src.outputs.mcp }} → v$VERSION"
           git tag -a "v$VERSION" -m "v$VERSION"
-          git push origin main
+          git push origin HEAD:main
           git push origin "v$VERSION"
