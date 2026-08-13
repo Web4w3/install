@@ -3,70 +3,14 @@
 const esbuild = require('esbuild');
 const path = require('path');
 const fs = require('fs');
+const { MCPS, sourceDir, entryPath: entryPathFor } = require('./mcps.js');
 
 const ROOT = path.resolve(__dirname, '../..');
 const OUT = path.resolve(__dirname, '../dist');
 
-/**
- * Single source of truth for where each MCP's source lives.
- *
- * `repo` is the GitHub slug to clone; `src` is the path to the entry point
- * *within* that clone. The checkout directory is always the repo name, so the
- * two can no longer drift.
- *
- * They previously did: rebuild.yml cloned into ../<mcp-name> while the entry
- * paths here expected ../<repo-name>. Those disagreed for most MCPs, so CI
- * rebuilds of gmail, outlook, msteams, nut-js and psql always failed with
- * "entry not found" and only ever worked when someone built them by hand
- * locally.
- */
-const MCPS = {
-  'brotherhood': {
-    repo: 'Web4w3/brotherhood',
-    src: 'src/mcp.ts',
-    external: [],
-  },
-  'chrome-bridge': {
-    repo: 'Web4w3/chrome-bridge-mcp',
-    src: 'mcp-server/src/index.ts',
-    external: [],
-  },
-  'gmail': {
-    repo: 'Web4w3/gmail-mcp-server',
-    src: 'src/index.ts',
-    external: [],
-  },
-  'msteams': {
-    repo: 'Web4w3/MSTeams',
-    src: 'src/index.ts',
-    external: [],
-  },
-  'nut-js': {
-    repo: 'Web4w3/nut-js-mcp-server',
-    src: 'src/index.ts',
-    // Native bindings must remain external — install separately
-    external: ['@nut-tree-fork/nut-js', 'js-yaml'],
-  },
-  'outlook': {
-    repo: 'Web4w3/outlook-mcp-server',
-    src: 'src/index.ts',
-    external: [],
-  },
-  'psql': {
-    repo: 'Web4w3/psql-mcp-server',
-    src: 'src/index.ts',
-    external: [],
-  },
-};
-
-/** Directory name a source repo is cloned into, as a sibling of this repo. */
-function sourceDir(name) {
-  return MCPS[name].repo.split('/')[1];
-}
-
 /** Absolute path to an MCP's entry point. */
 function entryPath(name) {
-  return path.join(ROOT, sourceDir(name), MCPS[name].src);
+  return entryPathFor(ROOT, name);
 }
 
 /**

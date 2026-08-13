@@ -18,7 +18,10 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 
-const { MCPS } = require('./build.js');
+// Deliberately depends on mcps.js, not build.js: build.js requires esbuild,
+// and publish.yml runs this without ever running `npm ci` (it only publishes,
+// it doesn't build) — the smoke test only needs the metadata, not the bundler.
+const { MCPS } = require('./mcps.js');
 
 // Servers that refuse to start without real credentials cannot be smoke-tested
 // here; a failure would mean "no secret in CI", not "broken bundle".
