@@ -15,17 +15,12 @@ const OUT = path.resolve(__dirname, '../dist');
  * two can no longer drift.
  *
  * They previously did: rebuild.yml cloned into ../<mcp-name> while the entry
- * paths here expected ../<repo-name>. Those disagreed for six of eight MCPs,
- * so CI rebuilds of gmail, outlook, msteams, nut-js, psql and android-bridge
- * always failed with "entry not found" and only ever worked when someone built
- * them by hand locally.
+ * paths here expected ../<repo-name>. Those disagreed for most MCPs, so CI
+ * rebuilds of gmail, outlook, msteams, nut-js and psql always failed with
+ * "entry not found" and only ever worked when someone built them by hand
+ * locally.
  */
 const MCPS = {
-  'android-bridge': {
-    repo: 'Web4w3/android-desktop-bridge',
-    src: 'packages/mcp-server/src/index.ts',
-    external: [],
-  },
   'brotherhood': {
     repo: 'Web4w3/brotherhood',
     src: 'src/mcp.ts',

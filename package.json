@@ -16,7 +16,6 @@
   "scripts": {
     "build": "node scripts/build.js",
     "smoke": "node scripts/smoke.js",
-    "build:android-bridge": "node scripts/build.js android-bridge",
     "build:brotherhood": "node scripts/build.js brotherhood",
     "build:chrome-bridge": "node scripts/build.js chrome-bridge",
     "build:gmail": "node scripts/build.js gmail",

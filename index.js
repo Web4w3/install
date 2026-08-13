@@ -5,11 +5,6 @@ const path = require('path');
 const fs = require('fs');
 
 const MCPS = {
-  'android-bridge': {
-    desc: 'Control Android device settings over local network',
-    dist: 'android-bridge.mjs',
-    env: [],
-  },
   'brotherhood': {
     desc: 'MCP bridge between two Claude Code sessions across machines',
     dist: 'brotherhood.mjs',
