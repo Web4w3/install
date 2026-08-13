@@ -20,16 +20,28 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Verify dist files
         run: ls -lh dist/
+
+      # Last line of defence: never publish a bundle that cannot start. Runs
+      # against every committed bundle, so a regression in one MCP blocks the
+      # release rather than shipping silently.
+      - name: Smoke-test all bundles
+        run: |
+          status=0
+          for f in dist/*.mjs; do
+            name="$(basename "$f" .mjs)"
+            node scripts/smoke.js "$name" || status=1
+          done
+          exit $status
 
       - name: Publish to npm
         if: ${{ github.event.inputs.dry_run != 'true' }}
