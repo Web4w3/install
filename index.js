@@ -9,6 +9,7 @@ const MCPS = {
     desc: 'MCP bridge between two Claude Code sessions across machines',
     dist: 'brotherhood.mjs',
     env: ['BROTHERHOOD_ROOM_ID', 'BROTHERHOOD_SECRET', 'BROTHERHOOD_RELAY_URL'],
+    sourcePrivate: true,
   },
   'chrome-bridge': {
     desc: 'AI control of your real Chrome browser (sessions & cookies intact)',
@@ -24,6 +25,7 @@ const MCPS = {
     desc: 'Microsoft Teams integration via MS Graph API',
     dist: 'msteams.mjs',
     env: ['AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET'],
+    sourcePrivate: true,
   },
   'nut-js': {
     desc: 'Desktop automation — mouse, keyboard, screen capture',
@@ -40,6 +42,7 @@ const MCPS = {
     desc: 'Run psql commands against a Postgres database',
     dist: 'psql.mjs',
     env: ['DATABASE_URL'],
+    sourcePrivate: true,
   },
 };
 
@@ -119,6 +122,13 @@ if (info.env && info.env.length > 0) {
 
 if (info.note) {
   process.stderr.write(`\n  Note: ${info.note}\n\n`);
+}
+
+if (info.sourcePrivate) {
+  process.stderr.write(
+    `\n  Note: source for "${mcp}" is private and not publicly auditable.\n` +
+    `  See the Security notes in the README before pointing it at real credentials.\n\n`
+  );
 }
 
 // ── Start the MCP server ──────────────────────────────────────────

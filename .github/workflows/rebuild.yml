@@ -34,9 +34,15 @@ jobs:
       # The repo slug and checkout directory come from build.js, which is the
       # only place they are defined. This step used to carry its own case
       # statement; it disagreed with build.js for six of eight MCPs.
+      #
+      # The dispatch payload is passed via `env`, not interpolated straight
+      # into the `run:` string — inlining an `${{ }}` expression there lets
+      # its value affect how the shell parses the rest of the script.
       - name: Resolve source repo
         id: src
-        run: node scripts/build.js --meta "${{ github.event.client_payload.mcp }}" >> "$GITHUB_OUTPUT"
+        env:
+          MCP_NAME: ${{ github.event.client_payload.mcp }}
+        run: node scripts/build.js --meta "$MCP_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Clone MCP source repo
         run: |

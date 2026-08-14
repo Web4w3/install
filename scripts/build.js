@@ -68,6 +68,15 @@ async function buildOne(name, config) {
           'const require = __lpCreateRequire(import.meta.url);',
         ].join('\n'),
       },
+      // Bundling inlines every dependency's source, which silently drops
+      // their license headers too. 'linked' collects any @license/@preserve
+      // banners esbuild finds in the bundled code into a sidecar
+      // dist/<name>.mjs.LEGAL.txt instead of discarding them. Verified against
+      // real builds: produces a real, non-empty file when the bundle actually
+      // pulls in a dependency that ships one (e.g. gmail → he@1.2.0), and an
+      // empty file when it doesn't (e.g. chrome-bridge) — either way nothing
+      // is silently lost.
+      legalComments: 'linked',
       logLevel: 'error',
     });
     dedupeShebang(outfile);

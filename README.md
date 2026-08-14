@@ -35,7 +35,12 @@ config to be reproducible and auditable.
 | `msteams` | Microsoft Teams via MS Graph API | `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET` | private |
 | `nut-js` | Desktop automation — mouse, keyboard, screen capture | none (see note) | [Web4w3/nut-js-mcp-server](https://github.com/Web4w3/nut-js-mcp-server) |
 | `outlook` | Outlook email via MS Graph API | `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET` | [Web4w3/outlook-mcp-server](https://github.com/Web4w3/outlook-mcp-server) |
-| `psql` | Run `psql` commands against a Postgres database | `DATABASE_URL` | private |
+| `psql` | Run `psql` commands against a Postgres database — **not yet published** | `DATABASE_URL` | private |
+
+`psql` is defined in the registry but hasn't been compiled and shipped yet;
+running it will error until a build lands. Run `npx @web4w3/install --list`
+to see current compile status for every entry — it's the source of truth,
+this table can drift.
 
 `brotherhood`, `msteams`, and `psql` are private repos — their source isn't
 publicly auditable. Weigh that before pointing them at real credentials; the
@@ -62,7 +67,10 @@ table above). This repo's only job is to bundle
 each one (via `esbuild`, see [`scripts/build.js`](scripts/build.js)) into a
 single-file `.mjs` so it can be run with zero install step via `npx`. That's
 also why `package.json` declares no runtime `dependencies` — everything a
-given MCP needs is already inlined into its `dist/<name>.mjs` bundle.
+given MCP needs is already inlined into its `dist/<name>.mjs` bundle. Any
+`@license`/`@preserve` banner a bundled dependency ships gets collected into
+a `dist/<name>.mjs.LEGAL.txt` sidecar alongside it, rather than silently
+dropped by the bundling step.
 
 **Publishing is CI-only.** [`.github/workflows/rebuild.yml`](.github/workflows/rebuild.yml)
 clones the relevant source repo, builds it, and pushes a version-bump commit
