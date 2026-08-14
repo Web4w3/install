@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { createRequire as __lpCreateRequire } from 'node:module';
+const require = __lpCreateRequire(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -12,7 +14,11 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
   throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __commonJS = (cb, mod) => function __require2() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
 };
 var __export = (target, all) => {
   for (var name in all)
@@ -7317,8 +7323,8 @@ var require_err_helpers = __commonJS({
 var require_err_proto = __commonJS({
   "../node_modules/pino-std-serializers/lib/err-proto.js"(exports, module) {
     "use strict";
-    var seen = Symbol("circular-ref-tag");
-    var rawSymbol = Symbol("pino-raw-err-ref");
+    var seen = /* @__PURE__ */ Symbol("circular-ref-tag");
+    var rawSymbol = /* @__PURE__ */ Symbol("pino-raw-err-ref");
     var pinoErrProto = Object.create({}, {
       type: {
         enumerable: true,
@@ -7455,7 +7461,7 @@ var require_req = __commonJS({
       mapHttpRequest,
       reqSerializer
     };
-    var rawSymbol = Symbol("pino-raw-req-ref");
+    var rawSymbol = /* @__PURE__ */ Symbol("pino-raw-req-ref");
     var pinoReqProto = Object.create({}, {
       id: {
         enumerable: true,
@@ -7550,7 +7556,7 @@ var require_res = __commonJS({
       mapHttpResponse,
       resSerializer
     };
-    var rawSymbol = Symbol("pino-raw-res-ref");
+    var rawSymbol = /* @__PURE__ */ Symbol("pino-raw-res-ref");
     var pinoResProto = Object.create({}, {
       statusCode: {
         enumerable: true,
@@ -7792,7 +7798,7 @@ var require_redact = __commonJS({
       }
       return true;
     }
-    var PATH_NOT_FOUND = Symbol("PATH_NOT_FOUND");
+    var PATH_NOT_FOUND = /* @__PURE__ */ Symbol("PATH_NOT_FOUND");
     function getValueIfExists(obj, parts) {
       let current = obj;
       for (const part of parts) {
@@ -8093,37 +8099,37 @@ var require_redact = __commonJS({
 var require_symbols = __commonJS({
   "../node_modules/pino/lib/symbols.js"(exports, module) {
     "use strict";
-    var setLevelSym = Symbol("pino.setLevel");
-    var getLevelSym = Symbol("pino.getLevel");
-    var levelValSym = Symbol("pino.levelVal");
-    var levelCompSym = Symbol("pino.levelComp");
-    var useLevelLabelsSym = Symbol("pino.useLevelLabels");
-    var useOnlyCustomLevelsSym = Symbol("pino.useOnlyCustomLevels");
-    var mixinSym = Symbol("pino.mixin");
-    var lsCacheSym = Symbol("pino.lsCache");
-    var chindingsSym = Symbol("pino.chindings");
-    var asJsonSym = Symbol("pino.asJson");
-    var writeSym = Symbol("pino.write");
-    var redactFmtSym = Symbol("pino.redactFmt");
-    var timeSym = Symbol("pino.time");
-    var timeSliceIndexSym = Symbol("pino.timeSliceIndex");
-    var streamSym = Symbol("pino.stream");
-    var stringifySym = Symbol("pino.stringify");
-    var stringifySafeSym = Symbol("pino.stringifySafe");
-    var stringifiersSym = Symbol("pino.stringifiers");
-    var endSym = Symbol("pino.end");
-    var formatOptsSym = Symbol("pino.formatOpts");
-    var messageKeySym = Symbol("pino.messageKey");
-    var errorKeySym = Symbol("pino.errorKey");
-    var nestedKeySym = Symbol("pino.nestedKey");
-    var nestedKeyStrSym = Symbol("pino.nestedKeyStr");
-    var mixinMergeStrategySym = Symbol("pino.mixinMergeStrategy");
-    var msgPrefixSym = Symbol("pino.msgPrefix");
-    var wildcardFirstSym = Symbol("pino.wildcardFirst");
-    var serializersSym = Symbol.for("pino.serializers");
-    var formattersSym = Symbol.for("pino.formatters");
-    var hooksSym = Symbol.for("pino.hooks");
-    var needsMetadataGsym = Symbol.for("pino.metadata");
+    var setLevelSym = /* @__PURE__ */ Symbol("pino.setLevel");
+    var getLevelSym = /* @__PURE__ */ Symbol("pino.getLevel");
+    var levelValSym = /* @__PURE__ */ Symbol("pino.levelVal");
+    var levelCompSym = /* @__PURE__ */ Symbol("pino.levelComp");
+    var useLevelLabelsSym = /* @__PURE__ */ Symbol("pino.useLevelLabels");
+    var useOnlyCustomLevelsSym = /* @__PURE__ */ Symbol("pino.useOnlyCustomLevels");
+    var mixinSym = /* @__PURE__ */ Symbol("pino.mixin");
+    var lsCacheSym = /* @__PURE__ */ Symbol("pino.lsCache");
+    var chindingsSym = /* @__PURE__ */ Symbol("pino.chindings");
+    var asJsonSym = /* @__PURE__ */ Symbol("pino.asJson");
+    var writeSym = /* @__PURE__ */ Symbol("pino.write");
+    var redactFmtSym = /* @__PURE__ */ Symbol("pino.redactFmt");
+    var timeSym = /* @__PURE__ */ Symbol("pino.time");
+    var timeSliceIndexSym = /* @__PURE__ */ Symbol("pino.timeSliceIndex");
+    var streamSym = /* @__PURE__ */ Symbol("pino.stream");
+    var stringifySym = /* @__PURE__ */ Symbol("pino.stringify");
+    var stringifySafeSym = /* @__PURE__ */ Symbol("pino.stringifySafe");
+    var stringifiersSym = /* @__PURE__ */ Symbol("pino.stringifiers");
+    var endSym = /* @__PURE__ */ Symbol("pino.end");
+    var formatOptsSym = /* @__PURE__ */ Symbol("pino.formatOpts");
+    var messageKeySym = /* @__PURE__ */ Symbol("pino.messageKey");
+    var errorKeySym = /* @__PURE__ */ Symbol("pino.errorKey");
+    var nestedKeySym = /* @__PURE__ */ Symbol("pino.nestedKey");
+    var nestedKeyStrSym = /* @__PURE__ */ Symbol("pino.nestedKeyStr");
+    var mixinMergeStrategySym = /* @__PURE__ */ Symbol("pino.mixinMergeStrategy");
+    var msgPrefixSym = /* @__PURE__ */ Symbol("pino.msgPrefix");
+    var wildcardFirstSym = /* @__PURE__ */ Symbol("pino.wildcardFirst");
+    var serializersSym = /* @__PURE__ */ Symbol.for("pino.serializers");
+    var formattersSym = /* @__PURE__ */ Symbol.for("pino.formatters");
+    var hooksSym = /* @__PURE__ */ Symbol.for("pino.hooks");
+    var needsMetadataGsym = /* @__PURE__ */ Symbol.for("pino.metadata");
     module.exports = {
       setLevelSym,
       getLevelSym,
@@ -9248,7 +9254,7 @@ var require_thread_stream = __commonJS({
     } = require_indexes();
     var buffer = __require("buffer");
     var assert2 = __require("assert");
-    var kImpl = Symbol("kImpl");
+    var kImpl = /* @__PURE__ */ Symbol("kImpl");
     var MAX_STRING = buffer.constants.MAX_STRING_LENGTH;
     var FakeWeakRef = class {
       constructor(value) {
@@ -11264,7 +11270,7 @@ ${originalIndentation}`;
 var require_multistream = __commonJS({
   "../node_modules/pino/lib/multistream.js"(exports, module) {
     "use strict";
-    var metadata = Symbol.for("pino.metadata");
+    var metadata = /* @__PURE__ */ Symbol.for("pino.metadata");
     var { DEFAULT_LEVELS } = require_constants();
     var DEFAULT_INFO_LEVEL = DEFAULT_LEVELS.info;
     function multistream(streamsArray, opts) {
@@ -29458,7 +29464,7 @@ var require_config = __commonJS({
     };
     var EncodingAliases = {};
     exports.EncodingAliases = EncodingAliases;
-    exports.EncodingOrders = function() {
+    exports.EncodingOrders = (function() {
       var aliases = EncodingAliases;
       var names = util2.objectKeys(EncodingNames);
       var orders = [];
@@ -29482,7 +29488,7 @@ var require_config = __commonJS({
         return EncodingNames[a].order - EncodingNames[b].order;
       });
       return orders;
-    }();
+    })();
     function init_JIS_TO_UTF8_TABLE() {
       if (EncodingTable.JIS_TO_UTF8_TABLE === null) {
         EncodingTable.JIS_TO_UTF8_TABLE = {};
@@ -39518,7 +39524,7 @@ var require_constants3 = __commonJS({
 var require_ipv4 = __commonJS({
   "../node_modules/ip-address/dist/ipv4.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -39527,13 +39533,13 @@ var require_ipv4 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -40084,7 +40090,7 @@ var require_helpers = __commonJS({
 var require_regular_expressions = __commonJS({
   "../node_modules/ip-address/dist/v6/regular-expressions.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -40093,13 +40099,13 @@ var require_regular_expressions = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -40176,7 +40182,7 @@ var require_regular_expressions = __commonJS({
 var require_ipv6 = __commonJS({
   "../node_modules/ip-address/dist/ipv6.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -40185,13 +40191,13 @@ var require_ipv6 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -41293,7 +41299,7 @@ var require_ipv6 = __commonJS({
 var require_ip_address = __commonJS({
   "../node_modules/ip-address/dist/ip-address.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -41302,13 +41308,13 @@ var require_ip_address = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -42177,7 +42183,7 @@ var require_socksclient = __commonJS({
 var require_build = __commonJS({
   "../node_modules/socks/build/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -42186,10 +42192,10 @@ var require_build = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
+    }));
     var __exportStar = exports && exports.__exportStar || function(m, exports2) {
       for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m, p);
     };
@@ -57581,7 +57587,7 @@ var require_lib3 = __commonJS({
 var require_node = __commonJS({
   "../node_modules/domhandler/lib/node.js"(exports) {
     "use strict";
-    var __extends = exports && exports.__extends || /* @__PURE__ */ function() {
+    var __extends = exports && exports.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
           d2.__proto__ = b2;
@@ -57599,7 +57605,7 @@ var require_node = __commonJS({
         }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
       };
-    }();
+    })();
     var __assign = exports && exports.__assign || function() {
       __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -57616,7 +57622,7 @@ var require_node = __commonJS({
     var domelementtype_1 = require_lib3();
     var Node = (
       /** @class */
-      function() {
+      (function() {
         function Node2() {
           this.parent = null;
           this.prev = null;
@@ -57674,12 +57680,12 @@ var require_node = __commonJS({
           return cloneNode(this, recursive);
         };
         return Node2;
-      }()
+      })()
     );
     exports.Node = Node;
     var DataNode = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(DataNode2, _super);
         function DataNode2(data) {
           var _this = _super.call(this) || this;
@@ -57701,12 +57707,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return DataNode2;
-      }(Node)
+      })(Node)
     );
     exports.DataNode = DataNode;
     var Text = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Text2, _super);
         function Text2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -57721,12 +57727,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return Text2;
-      }(DataNode)
+      })(DataNode)
     );
     exports.Text = Text;
     var Comment = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Comment2, _super);
         function Comment2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -57741,12 +57747,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return Comment2;
-      }(DataNode)
+      })(DataNode)
     );
     exports.Comment = Comment;
     var ProcessingInstruction = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(ProcessingInstruction2, _super);
         function ProcessingInstruction2(name, data) {
           var _this = _super.call(this, data) || this;
@@ -57762,12 +57768,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return ProcessingInstruction2;
-      }(DataNode)
+      })(DataNode)
     );
     exports.ProcessingInstruction = ProcessingInstruction;
     var NodeWithChildren = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NodeWithChildren2, _super);
         function NodeWithChildren2(children) {
           var _this = _super.call(this) || this;
@@ -57807,12 +57813,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return NodeWithChildren2;
-      }(Node)
+      })(Node)
     );
     exports.NodeWithChildren = NodeWithChildren;
     var CDATA = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(CDATA2, _super);
         function CDATA2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -57827,12 +57833,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return CDATA2;
-      }(NodeWithChildren)
+      })(NodeWithChildren)
     );
     exports.CDATA = CDATA;
     var Document = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Document2, _super);
         function Document2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -57847,12 +57853,12 @@ var require_node = __commonJS({
           configurable: true
         });
         return Document2;
-      }(NodeWithChildren)
+      })(NodeWithChildren)
     );
     exports.Document = Document;
     var Element = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Element2, _super);
         function Element2(name, attribs, children, type) {
           if (children === void 0) {
@@ -57906,7 +57912,7 @@ var require_node = __commonJS({
           configurable: true
         });
         return Element2;
-      }(NodeWithChildren)
+      })(NodeWithChildren)
     );
     exports.Element = Element;
     function isTag(node) {
@@ -58015,7 +58021,7 @@ var require_node = __commonJS({
 var require_lib4 = __commonJS({
   "../node_modules/domhandler/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -58024,10 +58030,10 @@ var require_lib4 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
+    }));
     var __exportStar = exports && exports.__exportStar || function(m, exports2) {
       for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m, p);
     };
@@ -58043,7 +58049,7 @@ var require_lib4 = __commonJS({
     };
     var DomHandler = (
       /** @class */
-      function() {
+      (function() {
         function DomHandler2(callback, options, elementCB) {
           this.dom = [];
           this.root = new node_js_1.Document(this.dom);
@@ -58163,7 +58169,7 @@ var require_lib4 = __commonJS({
           this.lastNode = null;
         };
         return DomHandler2;
-      }()
+      })()
     );
     exports.DomHandler = DomHandler;
     exports.default = DomHandler;
@@ -58177,7 +58183,7 @@ var require_leac = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var e = /\n/g;
     function t(t2) {
-      const o2 = [...t2.matchAll(e)].map((e2) => e2.index || 0);
+      const o2 = [...t2.matchAll(e)].map(((e2) => e2.index || 0));
       o2.unshift(-1);
       const s2 = n(o2, 0, o2.length);
       return (e2) => r(s2, e2);
@@ -58188,24 +58194,24 @@ var require_leac = __commonJS({
       return { offset: s2.offset, low: s2, high: l2 };
     }
     function r(e2, t2) {
-      return function(e3) {
+      return (function(e3) {
         return Object.prototype.hasOwnProperty.call(e3, "index");
-      }(e2) ? { line: e2.index, column: t2 - e2.offset } : r(e2.high.offset < t2 ? e2.high : e2.low, t2);
+      })(e2) ? { line: e2.index, column: t2 - e2.offset } : r(e2.high.offset < t2 ? e2.high : e2.low, t2);
     }
     function o(e2, t2) {
       return { ...e2, regex: s(e2, t2) };
     }
     function s(e2, t2) {
       if (0 === e2.name.length) throw new Error(`Rule #${t2} has empty name, which is not allowed.`);
-      if (function(e3) {
+      if ((function(e3) {
         return Object.prototype.hasOwnProperty.call(e3, "regex");
-      }(e2)) return function(e3) {
+      })(e2)) return (function(e3) {
         if (e3.global) throw new Error(`Regular expression /${e3.source}/${e3.flags} contains the global flag, which is not allowed.`);
         return e3.sticky ? e3 : new RegExp(e3.source, e3.flags + "y");
-      }(e2.regex);
-      if (function(e3) {
+      })(e2.regex);
+      if ((function(e3) {
         return Object.prototype.hasOwnProperty.call(e3, "str");
-      }(e2)) {
+      })(e2)) {
         if (0 === e2.str.length) throw new Error(`Rule #${t2} ("${e2.name}") has empty "str" property, which is not allowed.`);
         return new RegExp(l(e2.str), "y");
       }
@@ -59619,7 +59625,7 @@ var require_decode_codepoint = __commonJS({
 var require_decode = __commonJS({
   "../node_modules/entities/lib/decode.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -59628,13 +59634,13 @@ var require_decode = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -59714,7 +59720,7 @@ var require_decode = __commonJS({
     })(DecodingMode = exports.DecodingMode || (exports.DecodingMode = {}));
     var EntityDecoder = (
       /** @class */
-      function() {
+      (function() {
         function EntityDecoder2(decodeTree, emitCodePoint, errors) {
           this.decodeTree = decodeTree;
           this.emitCodePoint = emitCodePoint;
@@ -59893,7 +59899,7 @@ var require_decode = __commonJS({
           }
         };
         return EntityDecoder2;
-      }()
+      })()
     );
     exports.EntityDecoder = EntityDecoder;
     function getDecoder(decodeTree) {
@@ -60076,7 +60082,7 @@ var require_Tokenizer = __commonJS({
     };
     var Tokenizer = (
       /** @class */
-      function() {
+      (function() {
         function Tokenizer2(_a, cbs) {
           var _b = _a.xmlMode, xmlMode = _b === void 0 ? false : _b, _c = _a.decodeEntities, decodeEntities = _c === void 0 ? true : _c;
           this.cbs = cbs;
@@ -60741,7 +60747,7 @@ var require_Tokenizer = __commonJS({
           }
         };
         return Tokenizer2;
-      }()
+      })()
     );
     exports.default = Tokenizer;
   }
@@ -60751,7 +60757,7 @@ var require_Tokenizer = __commonJS({
 var require_Parser = __commonJS({
   "../node_modules/htmlparser2/lib/Parser.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -60760,13 +60766,13 @@ var require_Parser = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -60880,7 +60886,7 @@ var require_Parser = __commonJS({
     var reNameEnd = /\s|\//;
     var Parser = (
       /** @class */
-      function() {
+      (function() {
         function Parser2(cbs, options) {
           if (options === void 0) {
             options = {};
@@ -61173,7 +61179,7 @@ var require_Parser = __commonJS({
           this.end(chunk);
         };
         return Parser2;
-      }()
+      })()
     );
     exports.Parser = Parser;
   }
@@ -61580,7 +61586,7 @@ var require_lib6 = __commonJS({
       };
       return __assign.apply(this, arguments);
     };
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -61589,13 +61595,13 @@ var require_lib6 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -62441,7 +62447,7 @@ var require_feeds = __commonJS({
 var require_lib7 = __commonJS({
   "../node_modules/domutils/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -62450,10 +62456,10 @@ var require_lib7 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
+    }));
     var __exportStar = exports && exports.__exportStar || function(m, exports2) {
       for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m, p);
     };
@@ -62492,7 +62498,7 @@ var require_lib7 = __commonJS({
 var require_lib8 = __commonJS({
   "../node_modules/htmlparser2/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m, k);
       if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -62501,13 +62507,13 @@ var require_lib8 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
+    }) : (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
-    });
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
@@ -62589,7 +62595,7 @@ var require_cjs = __commonJS({
       return stringValue === "[object RegExp]" || stringValue === "[object Date]" || isReactElement(value);
     }
     var canUseSymbol = typeof Symbol === "function" && Symbol.for;
-    var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for("react.element") : 60103;
+    var REACT_ELEMENT_TYPE = canUseSymbol ? /* @__PURE__ */ Symbol.for("react.element") : 60103;
     function isReactElement(value) {
       return value.$$typeof === REACT_ELEMENT_TYPE;
     }
@@ -63011,7 +63017,7 @@ var require_html_to_text = __commonJS({
         this.newlineOrNonNewlineStringRe = new RegExp(`(\\n|[^\\n]+)`, "g");
         if (options.preserveNewlines) {
           const wordOrNewlineRe = new RegExp(`\\n|[^\\n${whitespaceCodes}]+`, "gm");
-          this.shrinkWrapAdd = function(text, inlineTextBuilder, transform2 = (str) => str, noWrap = false) {
+          this.shrinkWrapAdd = function(text, inlineTextBuilder, transform2 = ((str) => str), noWrap = false) {
             if (!text) {
               return;
             }
@@ -63039,7 +63045,7 @@ var require_html_to_text = __commonJS({
           };
         } else {
           const wordRe = new RegExp(`[^${whitespaceCodes}]+`, "g");
-          this.shrinkWrapAdd = function(text, inlineTextBuilder, transform2 = (str) => str, noWrap = false) {
+          this.shrinkWrapAdd = function(text, inlineTextBuilder, transform2 = ((str) => str), noWrap = false) {
             if (!text) {
               return;
             }
@@ -63204,7 +63210,7 @@ var require_html_to_text = __commonJS({
       }
       /** @returns { (str: string) => string } */
       _getCombinedWordTransformer() {
-        const wt = this._wordTransformer ? (str) => applyTransformer(str, this._wordTransformer) : void 0;
+        const wt = this._wordTransformer ? ((str) => applyTransformer(str, this._wordTransformer)) : void 0;
         const ce = this.options.encodeCharacters;
         return wt ? ce ? (str) => ce(wt(str)) : wt : ce;
       }
@@ -64206,7 +64212,7 @@ var require_html_to_text = __commonJS({
         }
       );
       options.formatters = Object.assign({}, genericFormatters, textFormatters, options.formatters);
-      options.selectors = mergeDuplicatesPreferLast(options.selectors, (s) => s.selector);
+      options.selectors = mergeDuplicatesPreferLast(options.selectors, ((s) => s.selector));
       handleDeprecatedOptions(options);
       return compile$1(options);
     }
@@ -64219,7 +64225,7 @@ var require_html_to_text = __commonJS({
           ([selector, definition]) => ({ ...definition, selector: selector || "*" })
         );
         options.selectors.push(...tagDefinitions);
-        options.selectors = mergeDuplicatesPreferLast(options.selectors, (s) => s.selector);
+        options.selectors = mergeDuplicatesPreferLast(options.selectors, ((s) => s.selector));
       }
       function set(obj, path3, value) {
         const valueKey = path3.pop();
@@ -71329,7 +71335,7 @@ ZodNaN.create = (params) => {
     ...processCreateParams(params)
   });
 };
-var BRAND = Symbol("zod_brand");
+var BRAND = /* @__PURE__ */ Symbol("zod_brand");
 var ZodBranded = class extends ZodType {
   _parse(input) {
     const { ctx } = this._processInputParams(input);
@@ -71531,14 +71537,14 @@ var ostring = () => stringType().optional();
 var onumber = () => numberType().optional();
 var oboolean = () => booleanType().optional();
 var coerce = {
-  string: (arg) => ZodString.create({ ...arg, coerce: true }),
-  number: (arg) => ZodNumber.create({ ...arg, coerce: true }),
-  boolean: (arg) => ZodBoolean.create({
+  string: ((arg) => ZodString.create({ ...arg, coerce: true })),
+  number: ((arg) => ZodNumber.create({ ...arg, coerce: true })),
+  boolean: ((arg) => ZodBoolean.create({
     ...arg,
     coerce: true
-  }),
-  bigint: (arg) => ZodBigInt.create({ ...arg, coerce: true }),
-  date: (arg) => ZodDate.create({ ...arg, coerce: true })
+  })),
+  bigint: ((arg) => ZodBigInt.create({ ...arg, coerce: true })),
+  date: ((arg) => ZodDate.create({ ...arg, coerce: true }))
 };
 var NEVER = INVALID;
 
@@ -71589,7 +71595,6 @@ function $constructor(name, initializer3, params) {
   Object.defineProperty(_, "name", { value: name });
   return _;
 }
-var $brand = Symbol("zod_brand");
 var $ZodAsyncError = class extends Error {
   constructor() {
     super(`Encountered Promise during synchronous parse. Use .parseAsync() instead.`);
@@ -74093,8 +74098,6 @@ function en_default2() {
 }
 
 // ../node_modules/zod/v4/core/registries.js
-var $output = Symbol("ZodOutput");
-var $input = Symbol("ZodInput");
 var $ZodRegistry = class {
   constructor() {
     this._map = /* @__PURE__ */ new Map();
@@ -75372,10 +75375,10 @@ var ZodMiniType = /* @__PURE__ */ $constructor("ZodMiniType", (inst, def) => {
   };
   inst.clone = (_def, params) => clone(inst, _def, params);
   inst.brand = () => inst;
-  inst.register = (reg, meta) => {
+  inst.register = ((reg, meta) => {
     reg.add(inst, meta);
     return inst;
-  };
+  });
 });
 var ZodMiniObject = /* @__PURE__ */ $constructor("ZodMiniObject", (inst, def) => {
   $ZodObject.init(inst, def);
@@ -75638,10 +75641,10 @@ var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   };
   inst.clone = (def2, params) => clone(inst, def2, params);
   inst.brand = () => inst;
-  inst.register = (reg, meta) => {
+  inst.register = ((reg, meta) => {
     reg.add(inst, meta);
     return inst;
-  };
+  });
   inst.parse = (data, params) => parse2(inst, data, params, { callee: inst.parse });
   inst.safeParse = (data, params) => safeParse3(inst, data, params);
   inst.parseAsync = async (data, params) => parseAsync2(inst, data, params, { callee: inst.parseAsync });
@@ -77611,11 +77614,13 @@ function assertCompleteRequestPrompt(request) {
   if (request.params.ref.type !== "ref/prompt") {
     throw new TypeError(`Expected CompleteRequestPrompt, but got ${request.params.ref.type}`);
   }
+  void request;
 }
 function assertCompleteRequestResourceTemplate(request) {
   if (request.params.ref.type !== "ref/resource") {
     throw new TypeError(`Expected CompleteRequestResourceTemplate, but got ${request.params.ref.type}`);
   }
+  void request;
 }
 var CompleteResultSchema = ResultSchema.extend({
   completion: looseObject({
@@ -77768,7 +77773,7 @@ function isTerminal(status) {
 }
 
 // ../node_modules/zod-to-json-schema/dist/esm/Options.js
-var ignoreOverride = Symbol("Let zodToJsonSchema decide on which parser to use");
+var ignoreOverride = /* @__PURE__ */ Symbol("Let zodToJsonSchema decide on which parser to use");
 var defaultOptions = {
   name: void 0,
   $refStrategy: "root",
@@ -80744,7 +80749,7 @@ var Server = class extends Protocol {
 };
 
 // ../node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
-var COMPLETABLE_SYMBOL = Symbol.for("mcp.completable");
+var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
 }
@@ -81789,6 +81794,7 @@ var ImapEmailClient = class {
   constructor(config3) {
     this.config = config3;
   }
+  config;
   createImapFlow() {
     return new import_imapflow.ImapFlow({
       host: this.config.imap.host,
@@ -82066,6 +82072,7 @@ var Pop3EmailClient = class {
   constructor(config3) {
     this.config = config3;
   }
+  config;
   async readMarks() {
     try {
       const raw = await fs.readFile(this.config.pop3MarksFile, "utf8");
@@ -82216,6 +82223,7 @@ var GmailService = class {
     this.imapClient = new ImapEmailClient(config3);
     this.pop3Client = new Pop3EmailClient(config3);
   }
+  config;
   imapClient;
   pop3Client;
   getClient(protocol) {
@@ -82354,8 +82362,4 @@ main().catch((error2) => {
   console.error("Failed to start gmail-mcp-server", error2);
   process.exit(1);
 });
-/*! Bundled license information:
-
-he/he.js:
-  (*! https://mths.be/he v1.2.0 by @mathias | MIT license *)
-*/
+/*! For license information please see gmail.mjs.LEGAL.txt */
