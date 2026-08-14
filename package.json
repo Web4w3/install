@@ -26,7 +26,8 @@
   },
   "files": [
     "index.js",
-    "dist/**/*.mjs"
+    "dist/**/*.mjs",
+    "dist/**/*.LEGAL.txt"
   ],
   "devDependencies": {
     "esbuild": "^0.24.0"
